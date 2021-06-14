@@ -32,9 +32,7 @@ router.post(
             }
 
             const hashedPassword = await bcrypt.hash(password, 12)
-
-           let regDate = new Date()
-            let lastLogin = new Date(0)
+            let regDate = new Date()
             const user = new User({email, password: hashedPassword, regDate })
 
             await user.save()
@@ -71,18 +69,23 @@ router.post(
                 return res.status(400).json({message: 'Invalid email or password! Try again!'})
             }
 
+
+
             const token = jwt.sign(
                 {userId: user.id},
                 config.get('jwtSecret'),
                 {expiresIn: '1h'}
             )
-            //const lastLogin = new Date()
-           //await user.update({email},{$set: {lastLogin : lastLogin}})
+
             res.json({token, userID: user.id})
+
+            // const lastLogin = new Date()
+            // await User.findOneAndUpdate({email},{$set: {lastLogin : 1}})
 
         } catch (e) {
             res.status(500).json({message: 'Something went wrong! Try again!'})
         }
 
 })
+
 module.exports = router
