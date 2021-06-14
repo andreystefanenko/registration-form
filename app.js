@@ -8,8 +8,8 @@ app.use(express.json({extended: true}))
 //register routes
 app.use('/api/auth', require('./routes/auth.routes'))
 
-const PORT = procces.env.PORT || config.get('port') || 5000
-
+const PORT = process.env.PORT || config.get('port') || 5000
+git
 async function start (){
     try{
         console.log(JSON.stringify(process.env))
