@@ -1,0 +1,15 @@
+@import "~materialize-css/dist/css/materialize.min.css";
+
+.textCardMargin{
+    margin-top: 7px;
+    line-height: 140%;
+}
+
+nav .brand-logo {
+    position: absolute;
+    color: #fff;
+    display: inline-block;
+    font-size: 2.1rem;
+    padding: 0rem;
+    margin-left: 16px;
+}
