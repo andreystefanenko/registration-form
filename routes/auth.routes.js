@@ -66,11 +66,14 @@ router.post(
             const isMatchByPassword = await bcrypt.compare(password, user.password)
             const loginDate = new Date()
 
-            await User.update({email}, {$set: {lastLogin: loginDate}})
 
             if (!user || !isMatchByPassword) {
                 return res.status(400).json({message: 'Invalid email or password! Try again!'})
             }
+            if (user.isBlocked) {
+                return res.status(403).json({message: 'User is blocked!'})
+            }
+            await User.update({email}, {$set: {lastLogin: loginDate}})
 
             const token = jwt.sign(
                 {userId: user.id},
@@ -78,7 +81,7 @@ router.post(
                 {expiresIn: '1h'}
             )
 
-            res.json({token, userID: user.id})
+            res.json({token, userId: user.id})
 
 
         } catch (e) {

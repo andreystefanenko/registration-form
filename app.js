@@ -13,9 +13,6 @@ app.use('/api/users', require('./routes/users.routes'))
 const PORT = process.env.PORT || config.get('port') || 5000
 async function start (){
     try{
-        console.log(JSON.stringify(process.env))
-        console.log("connecting to mongoDB...")
-        console.log(config.get('mongoUri'))
         await mongoose.connect(config.get('mongoUri'),{
             useNewUrlParser: true,
             useUnifiedTopology: true,

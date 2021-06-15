@@ -1,6 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {useHttp} from "../hooks/http.hook";
 import classNames from "classnames";
+import {useHistory} from "react-router-dom";
+import {AuthContext} from "../context/AuthContext";
+import {useAuth} from "../hooks/auth.hook";
 
 const CheckBox = ({isChecked, onClick}) =>
     <p>
@@ -13,34 +16,46 @@ const CheckBox = ({isChecked, onClick}) =>
 
 export const TablePage = () => {
     const {request} = useHttp()
-    const [users, setUsers] = useState([]);
-    const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+    const [users, setUsers] = useState([])
+    const [isSelectAllChecked, setIsSelectAllChecked] = useState(false)
+    const history = useHistory()
+    const auth = useContext(AuthContext)
 
-    useEffect(() => request('api/users/all', 'GET').then(data => setUsers(data)), []);
+    useEffect(() => request('api/users/all', 'GET')
+        .then(data => setUsers(data)), []);
 
     const onUserSelect = user => {
-        const newState = [...users];
+        const newState = [...users]
 
-        const userToUpdateIndex = newState.indexOf(user);
-        newState[userToUpdateIndex].isSelected = !newState[userToUpdateIndex].isSelected;
+        const userToUpdateIndex = newState.indexOf(user)
+        newState[userToUpdateIndex].isSelected = !newState[userToUpdateIndex].isSelected
 
         setUsers(newState);
     }
 
     const onSelectAll = isChecked => {
-        setIsSelectAllChecked(!isChecked);
+        setIsSelectAllChecked(!isChecked)
 
-        const newState = [...users];
+        const newState = [...users]
 
-        newState.forEach(x => x.isSelected = !isChecked);
+        newState.forEach(x => x.isSelected = !isChecked)
 
-        setUsers(newState);
+        setUsers(newState)
     }
 
     const onBlockUsersAction = isBlockAction => request('api/users/block', 'POST', {
         userEmails: users.filter(x => x.isSelected).map(x => x.email),
         isBlockAction: isBlockAction
-    }).then(data => setUsers(data));
+    }).then(data => {
+
+        const blockedUser = data.find(currentUser => currentUser._id = auth.userId)
+        if (blockedUser.isBlocked)
+        {
+            auth.logout()
+            history.push('/')
+        }
+        setUsers(data)
+    });
 
     return (
         <div>
