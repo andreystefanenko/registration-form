@@ -1,10 +1,25 @@
 import React, {useContext} from 'react'
 import {useHistory} from "react-router-dom"
 import {AuthContext} from "../context/AuthContext"
+import {AppBar, Button, makeStyles, Toolbar, Typography} from "@material-ui/core";
+
 
 export const Navbar = () => {
     const history = useHistory()
     const auth = useContext(AuthContext)
+
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            flexGrow: 1,
+        },
+        menuButton: {
+            marginRight: theme.spacing(2),
+        },
+        title: {
+            flexGrow: 1,
+        },
+    }));
+    const classes = useStyles();
 
     const logoutHandler = (event) => {
         event.preventDefault()
@@ -12,14 +27,16 @@ export const Navbar = () => {
         history.push('/')
     }
     return (
-        <nav>
-            <div className="nav-wrapper blue">
-                <span className="brand-logo">Main page</span>
-                <ul id="nav-mobile" className="right hide-on-med-and-down">
-                    <li><a href="/" onClick={logoutHandler}>Выйти</a></li>
-                </ul>
-            </div>
-        </nav>
+        <div className={classes.root}>
+        <AppBar position="static">
+            <Toolbar>
+                <Typography variant="h6" className={classes.title} >
+                    Main
+                </Typography>
+                <Button color="inherit" onClick={logoutHandler}>Logout</Button>
+            </Toolbar>
+        </AppBar>
+        </div>
     )
 
 }

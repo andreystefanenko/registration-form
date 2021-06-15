@@ -4,7 +4,8 @@ const schema = new Schema({
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     regDate: {type: Date},
-    lastLogin: {type: Date}
+    lastLogin: {type: Date},
+    isBlocked: {type: Boolean}
 })
 
 module.exports = model('User', schema)

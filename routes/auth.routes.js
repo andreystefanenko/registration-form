@@ -2,9 +2,9 @@ const {Router} = require('express')
 const config = require('config')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const {check,validationResult} = require('express-validator')
-const User = require ('../models/User')
-const router = Router()
+const {check, validationResult} = require('express-validator')
+const User = require('../models/User')
+const router = Router({mergeParams: true})
 
 // /api/auth/register
 router.post(
@@ -15,10 +15,10 @@ router.post(
             .isLength({min: 1})
     ],
     async (req, res) => {
-        try{
+        try {
 
             const errors = validationResult(req)
-            if(!errors.isEmpty()) {
+            if (!errors.isEmpty()) {
                 return res.status(400).json({
                     errors: errors.array(),
                     message: 'Incorrect registration data'
@@ -28,12 +28,12 @@ router.post(
 
             const candidate = await User.findOne({email})
             if (candidate) {
-               return res.status(400).json({message: "This user already exists"})
+                return res.status(400).json({message: "This user already exists"})
             }
 
             const hashedPassword = await bcrypt.hash(password, 12)
             let regDate = new Date()
-            const user = new User({email, password: hashedPassword, regDate })
+            const user = new User({email, password: hashedPassword, regDate})
 
             await user.save()
 
@@ -42,14 +42,14 @@ router.post(
         } catch (e) {
             res.status(500).json({message: 'Something went wrong! Try again!'})
         }
-})
+    })
 
 // /api/auth/login
 router.post(
     '/login',
     [
-      check('email', 'Use correct email').normalizeEmail().isEmail(),
-      check ('password', 'Enter correct password').exists()
+        check('email', 'Use correct email').normalizeEmail().isEmail(),
+        check('password', 'Enter correct password').exists()
     ],
     async (req, res) => {
         try {
@@ -66,13 +66,11 @@ router.post(
             const isMatchByPassword = await bcrypt.compare(password, user.password)
             const loginDate = new Date()
 
-            await User.update({email},{$set: {lastLogin: loginDate}})
+            await User.update({email}, {$set: {lastLogin: loginDate}})
 
             if (!user || !isMatchByPassword) {
                 return res.status(400).json({message: 'Invalid email or password! Try again!'})
             }
-
-
 
             const token = jwt.sign(
                 {userId: user.id},
@@ -87,6 +85,6 @@ router.post(
             res.status(500).json({message: 'Something went wrong! Try again!'})
         }
 
-})
+    })
 
 module.exports = router
