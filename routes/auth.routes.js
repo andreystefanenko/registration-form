@@ -64,6 +64,9 @@ router.post(
 
             const user = await User.findOne({email})
             const isMatchByPassword = await bcrypt.compare(password, user.password)
+            const loginDate = new Date()
+
+            await User.update({email},{$set: {lastLogin: loginDate}})
 
             if (!user || !isMatchByPassword) {
                 return res.status(400).json({message: 'Invalid email or password! Try again!'})
@@ -79,8 +82,6 @@ router.post(
 
             res.json({token, userID: user.id})
 
-            // const lastLogin = new Date()
-            // await User.findOneAndUpdate({email},{$set: {lastLogin : 1}})
 
         } catch (e) {
             res.status(500).json({message: 'Something went wrong! Try again!'})
