@@ -48,7 +48,7 @@ export const TablePage = () => {
         isBlockAction: isBlockAction
     }).then(data => {
 
-        const blockedUser = data.find(currentUser => currentUser._id = auth.userId)
+        const blockedUser = data.find(currentUser => currentUser._id === auth.userId)
         if (blockedUser.isBlocked)
         {
             auth.logout()
